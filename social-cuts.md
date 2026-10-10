@@ -12,7 +12,7 @@ Synthetic units. One process. No model call or real billing. Same-key accounting
 
 This is the kind of boundary I think about while building Roster: shared resources need application controls.
 
-Article: DEV_URL
+Article: https://dev.to/bobbyhalljr/your-agents-budget-check-has-a-race-condition-build-a-reservation-ledger-in-typescript-2dbe
 Code: https://github.com/bobbyhalljr/agent-budget-reservations
 
 # X thread
@@ -27,5 +27,5 @@ Build a tiny TypeScript reservation ledger: reserve before dispatch, keep the ho
 
 3. Synthetic units, one process, no model call. Hard ceilings need enforceable caps, durable atomic reservations and reconciliation.
 
-DEV_URL
+https://dev.to/bobbyhalljr/your-agents-budget-check-has-a-race-condition-build-a-reservation-ledger-in-typescript-2dbe
 https://github.com/bobbyhalljr/agent-budget-reservations

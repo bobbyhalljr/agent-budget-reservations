@@ -17,10 +17,10 @@ def box(d,rect,lines,color=cyan):
 def arrow(d,a,b):
  d.line((*a,*b),fill=violet,width=5);x,y=b;d.polygon([(x,y),(x-15,y-10),(x-15,y+10)],fill=violet)
 im,d=base('Your budget check has a race condition.','Two calls. One budget. Both checks pass.')
-box(d,(70,290,720,640),['CHECK THEN AWAIT','Call A sees 100. Wants 60.','Call B sees 100. Wants 60.','Both start spending.'],red)
-box(d,(850,290,1530,640),['RESERVE BEFORE AWAIT','A holds 60. Available: 40.','B wants 60. Admission denied.','Timeout keeps A\'s hold.'])
-d.text((90,720),'120 / 100',fill=red,font=font(70,True));d.text((860,720),'60 held + 40 free',fill=cyan,font=font(52,True))
-d.text((70,840),'A tiny TypeScript reservation ledger  |  Synthetic units  |  No model call',fill=muted,font=font(21));im.save(p/'cover.png')
+box(d,(70,240,720,490),['CHECK THEN AWAIT','Call A sees 100. Wants 60.','Call B sees 100. Wants 60.','Both start spending.'],red)
+box(d,(850,240,1530,490),['RESERVE BEFORE AWAIT','A holds 60. Available: 40.','B wants 60. Admission denied.','Timeout keeps A\'s hold.'])
+d.text((90,520),'120 / 100',fill=red,font=font(70,True));d.text((860,530),'60 held + 40 free',fill=cyan,font=font(52,True))
+d.text((70,635),'A tiny TypeScript reservation ledger  |  Synthetic units  |  No model call',fill=muted,font=font(21));im.crop((0,0,1600,672)).save(p/'cover.png')
 im,d=base('The check is already stale.','A deterministic microtask interleaving reproduces the problem.')
 for x,label in [(80,'Call A'),(800,'Call B')]:
  box(d,(x,270,x+640,480),[label,'spent = 0','0 + 60 <= 100: yes'],violet)

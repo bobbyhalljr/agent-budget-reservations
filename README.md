@@ -2,7 +2,7 @@
 
 A dependency-free TypeScript demonstration of budget admission, active holds, unknown outcomes and trusted-receipt settlement. Two synthetic 60-unit calls reproduce overspending against a 100-unit balance. A synchronous reservation admits only one.
 
-Article: publication pending. This README will be updated with the verified live article URL.
+Article: [Your Agent's Budget Check Has a Race Condition](https://dev.to/bobbyhalljr/your-agents-budget-check-has-a-race-condition-build-a-reservation-ledger-in-typescript-2dbe).
 
 ## Run
 
