@@ -1,0 +1,1 @@
+{"name":"agent-budget-reservations","version":"1.0.0","private":true,"type":"module","scripts":{"test":"node --experimental-strip-types test.ts"},"engines":{"node":">=22.20.0"}}

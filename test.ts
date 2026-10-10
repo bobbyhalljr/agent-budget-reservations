@@ -1,0 +1,36 @@
+import assert from 'node:assert/strict';
+import { Budget } from './budget.ts';
+let checks = 0;
+function check(name: string, fn: () => void) { fn(); checks++; console.log(`ok ${checks} - ${name}`); }
+check('reject invalid budget', () => assert.throws(() => new Budget(-1)));
+check('reject fractional budget', () => assert.throws(() => new Budget(0.5)));
+check('first 60-unit hold fits in 100', () => assert.equal(new Budget(100).reserve('a',60),true));
+check('second 60-unit hold cannot share the same 100', () => { const b=new Budget(100); b.reserve('a',60); assert.equal(b.reserve('b',60),false); });
+check('same key does not reserve twice', () => { const b=new Budget(100); b.reserve('a',60); b.reserve('a',60); assert.equal(b.snapshot().held,60); });
+check('same key cannot change cap', () => { const b=new Budget(100); b.reserve('a',60); assert.throws(() => b.reserve('a',40)); });
+check('empty key rejected', () => assert.throws(() => new Budget(100).reserve(' ',10)));
+check('zero cap rejected', () => assert.throws(() => new Budget(100).reserve('a',0)));
+check('unsafe cap rejected', () => assert.throws(() => new Budget(100).reserve('a',Number.MAX_SAFE_INTEGER+1)));
+check('settlement releases unused capacity', () => { const b=new Budget(100); b.reserve('a',60); b.settle('a',35); assert.deepEqual(b.snapshot(),{spent:35,held:0,available:65}); });
+check('same settlement is idempotent', () => { const b=new Budget(100); b.reserve('a',60); b.settle('a',35); b.settle('a',35); assert.equal(b.snapshot().spent,35); });
+check('changed settlement rejected', () => { const b=new Budget(100); b.reserve('a',60); b.settle('a',35); assert.throws(() => b.settle('a',36)); });
+check('unknown outcome retains hold', () => { const b=new Budget(100); b.reserve('a',60); b.unknown('a'); assert.deepEqual(b.snapshot(),{spent:0,held:60,available:40}); });
+check('unknown outcome cannot be released', () => { const b=new Budget(100); b.reserve('a',60); b.unknown('a'); assert.throws(() => b.releaseBeforeDispatch('a')); });
+check('unknown outcome can settle from receipt', () => { const b=new Budget(100); b.reserve('a',60); b.unknown('a'); b.settle('a',35); assert.equal(b.snapshot().available,65); });
+check('cancel before dispatch restores capacity', () => { const b=new Budget(100); b.reserve('a',60); b.releaseBeforeDispatch('a'); assert.equal(b.snapshot().available,100); });
+check('released key cannot authorize a new dispatch', () => { const b=new Budget(100); b.reserve('a',60); b.releaseBeforeDispatch('a'); assert.equal(b.reserve('a',60),false); assert.throws(() => b.settle('a',10)); });
+check('settled key cannot authorize a new dispatch', () => { const b=new Budget(100); b.reserve('a',60); b.settle('a',35); assert.equal(b.reserve('a',60),false); });
+check('over-cap receipt retains conservative hold', () => { const b=new Budget(100); b.reserve('a',60); b.unknown('a'); assert.throws(() => b.settle('a',61)); assert.equal(b.snapshot().held,60); });
+check('missing receipt key rejected', () => assert.throws(() => new Budget(100).settle('missing',1)));
+console.log(`${checks}/${checks} checks passed`);
+let naiveSpent = 0;
+async function naive(cap: number) { if (naiveSpent + cap > 100) return false; await Promise.resolve(); naiveSpent += cap; return true; }
+const bad = await Promise.all([naive(60),naive(60)]);
+assert.deepEqual(bad,[true,true]); assert.equal(naiveSpent,120);
+const ledger = new Budget(100);
+const good = await Promise.all(['a','b'].map(async id => ledger.reserve(id,60)));
+assert.deepEqual(good,[true,false]);
+console.log(`naive: admitted=${bad.filter(Boolean).length}, spent=${naiveSpent}, limit=100`);
+console.log(`reserved: admitted=${good.filter(Boolean).length}, held=${ledger.snapshot().held}, available=${ledger.snapshot().available}`);
+ledger.unknown('a'); console.log(`timeout: held=${ledger.snapshot().held}, available=${ledger.snapshot().available}`);
+ledger.settle('a',35); console.log(`receipt: spent=${ledger.snapshot().spent}, held=${ledger.snapshot().held}, available=${ledger.snapshot().available}`);

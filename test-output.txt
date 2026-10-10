@@ -1,0 +1,25 @@
+ok 1 - reject invalid budget
+ok 2 - reject fractional budget
+ok 3 - first 60-unit hold fits in 100
+ok 4 - second 60-unit hold cannot share the same 100
+ok 5 - same key does not reserve twice
+ok 6 - same key cannot change cap
+ok 7 - empty key rejected
+ok 8 - zero cap rejected
+ok 9 - unsafe cap rejected
+ok 10 - settlement releases unused capacity
+ok 11 - same settlement is idempotent
+ok 12 - changed settlement rejected
+ok 13 - unknown outcome retains hold
+ok 14 - unknown outcome cannot be released
+ok 15 - unknown outcome can settle from receipt
+ok 16 - cancel before dispatch restores capacity
+ok 17 - released key cannot authorize a new dispatch
+ok 18 - settled key cannot authorize a new dispatch
+ok 19 - over-cap receipt retains conservative hold
+ok 20 - missing receipt key rejected
+20/20 checks passed
+naive: admitted=2, spent=120, limit=100
+reserved: admitted=1, held=60, available=40
+timeout: held=60, available=40
+receipt: spent=35, held=0, available=65
